@@ -23,7 +23,7 @@ const Sidebar = ({ notes, setIsCreating, activeNoteId, setActiveNoteId }) => {
               }}
               className={`${
                 activeNoteId === note.id ? 'font-bold' : ''
-              } w-full py-[10px] text-start cursor-pointer truncate text-lg`}
+              } w-full py-[10px] text-start cursor-pointer truncate text-lg hover:font-bold`}
             >
               {note.title}
             </button>
