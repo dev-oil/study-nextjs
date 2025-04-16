@@ -5,7 +5,8 @@ import Header from '@/components/Header';
 import NewNote from '@/components/NewNote';
 import NoteViewer from '@/components/NoteViewer';
 import Sidebar from '@/components/Sidebar';
-import React, { useState } from 'react';
+import { supabase } from '@/utils/supabase';
+import React, { useEffect, useState } from 'react';
 
 const notes = [
   {
@@ -23,6 +24,10 @@ const notes = [
 const UI = () => {
   const [activeNoteId, setActiveNoteId] = useState(null);
   const [isCreating, setIsCreating] = useState(false);
+
+  useEffect(() => {
+    supabase.from('note').select('+').then(console.log);
+  }, []);
 
   return (
     <main className='bg-[url("/bg.jpg")] bg-cover bg-center h-screen'>
