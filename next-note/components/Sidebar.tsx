@@ -1,6 +1,13 @@
 'use client';
 
-const Sidebar = ({ notes, setIsCreating, activeNoteId, setActiveNoteId }) => {
+const Sidebar = ({
+  activeNoteId,
+  setActiveNoteId,
+  setIsCreating,
+  search,
+  setSearch,
+  notes,
+}) => {
   return (
     <div className='relative w-1/3 h-[calc(100vh-61px)] py-[20px] px-[10px] flex flex-col'>
       <div className='sticky top-0 z-10'>
@@ -10,6 +17,14 @@ const Sidebar = ({ notes, setIsCreating, activeNoteId, setActiveNoteId }) => {
         >
           ✚ 새로운 노트
         </button>
+
+        <input
+          type='text'
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className='w-full mt-[20px] p-[10px] border border-white/50 rounded-lg hover:border-white/80'
+          placeholder='검색하기'
+        />
       </div>
 
       {/* 스크롤 되는 영역 */}

@@ -15,9 +15,13 @@ const UI = () => {
   const [notes, setNotes] = useState<
     Database['public']['Tables']['note']['Row'][]
   >([]);
+  const [search, setSearch] = useState('');
 
   const fetchNotes = async () => {
-    const { data, error } = await supabase.from('note').select('+');
+    const { data, error } = await supabase
+      .from('note')
+      .select('+')
+      .ilike('title', `%${search}%`);
 
     if (error) {
       alert(error.message);
@@ -30,6 +34,10 @@ const UI = () => {
     fetchNotes();
   }, []);
 
+  useEffect(() => {
+    fetchNotes();
+  }, [search]);
+
   return (
     <main className='bg-[url("/bg.jpg")] bg-cover bg-center h-screen'>
       <Header />
@@ -38,12 +46,22 @@ const UI = () => {
           activeNoteId={activeNoteId}
           setActiveNoteId={setActiveNoteId}
           setIsCreating={setIsCreating}
+          search={search}
+          setSearch={setSearch}
           notes={notes}
         />
         {isCreating ? (
-          <NewNote setIsCreating={setIsCreating} />
+          <NewNote
+            fetchNotes={fetchNotes}
+            setIsCreating={setIsCreating}
+            setActiveNoteId={setActiveNoteId}
+          />
         ) : activeNoteId ? (
-          <NoteViewer note={notes.find((note) => note.id === activeNoteId)} />
+          <NoteViewer
+            note={notes.find((note) => note.id === activeNoteId)}
+            setActiveNoteId={setActiveNoteId}
+            fetchNotes={fetchNotes}
+          />
         ) : (
           <EmptyNote />
         )}

@@ -1,14 +1,35 @@
 'use client';
 
+import { Database } from '@/types_db';
+import { supabase } from '@/utils/supabase';
 import { useState } from 'react';
+import { TablesInsert, Tables } from '@/types_db';
 
-const NewNote = ({ setIsCreating }) => {
+const NewNote = ({ setIsCreating, setActiveNoteId, fetchNotes }) => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
 
   const onSave = async () => {
-    // supabase에 노트 저장하기
+    if (!title || !content) {
+      alert('제목과 내용을 입력해주세요!');
+      return;
+    }
 
+    const { data, error } = await supabase
+      .from('note')
+      .insert<TablesInsert<'note'>>({
+        title,
+        content,
+      })
+      .select(); // 반환 타입은 Tables<'note'>[] | null
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    await fetchNotes();
+    setActiveNoteId(data[0].id);
     setIsCreating(false);
   };
 

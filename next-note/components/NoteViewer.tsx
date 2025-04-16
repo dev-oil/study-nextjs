@@ -1,13 +1,42 @@
 'use client';
 
+import { supabase } from '@/utils/supabase';
 import { useEffect, useState } from 'react';
 
-const NoteViewer = ({
-  note, // {id: 1, title: "", content: ""}
-}) => {
+const NoteViewer = ({ note, setActiveNoteId, fetchNotes }) => {
   const [title, setTitle] = useState(note?.title);
   const [content, setContent] = useState(note?.content);
   const [isEditing, setIsEditing] = useState(false);
+
+  const onEdit = async () => {
+    const { data, error } = await supabase
+      .from('note')
+      .update({
+        title,
+        content,
+      })
+      .eq('id', note.id);
+
+    if (error) {
+      alert(error.message);
+    }
+    setIsEditing(false);
+    fetchNotes();
+  };
+
+  const onDelete = async () => {
+    const { data, error } = await supabase
+      .from('note')
+      .delete()
+      .eq('id', note.id);
+
+    if (error) {
+      alert(error.message);
+    }
+    setIsEditing(false);
+    setActiveNoteId(null);
+    fetchNotes();
+  };
 
   useEffect(() => {
     setTitle(note?.title);
@@ -47,10 +76,16 @@ const NoteViewer = ({
         <div className='flex justify-end gap-[10px]'>
           {isEditing ? (
             <>
-              <button className='flex-1 py-[10px] rounded-lg border border-white/50 cursor-pointer bg-white/30 hover:bg-white/50 hover:text-black transition-all'>
+              <button
+                onClick={() => onEdit()}
+                className='flex-1 py-[10px] rounded-lg border border-white/50 cursor-pointer bg-white/30 hover:bg-white/50 hover:text-black transition-all'
+              >
                 저장
               </button>
-              <button className='flex-1 py-[10px] rounded-lg border border-white/50 cursor-pointer bg-white/30 hover:bg-white/50 hover:text-black transition-all'>
+              <button
+                onClick={() => onDelete()}
+                className='flex-1 py-[10px] rounded-lg border border-white/50 cursor-pointer bg-white/30 hover:bg-white/50 hover:text-black transition-all'
+              >
                 삭제
               </button>
             </>
