@@ -2,13 +2,19 @@ import { NextResponse } from 'next/server';
 
 // 브라우저에 어떤 개인정보 노출 위험 없이 모두 api 화를 시킬 수 있다는 것이 큰 장점
 // http://localhost:3000/api/users
+
+const DB = [
+  { id: 1, name: 'Alice' },
+  { id: 2, name: 'Bob' },
+  { id: 3, name: 'ChaCha' },
+];
+
 export async function GET(request: Request) {
+  const searchParams = new URL(request.url).searchParams;
+  const name = searchParams.get('name') ?? '';
+
   return NextResponse.json({
-    users: [
-      { id: 1, name: 'Alice' },
-      { id: 2, name: 'Bob' },
-      { id: 3, name: 'ChaCha' },
-    ],
+    users: DB.filter((user) => user.name.includes(name)),
   });
 }
 
