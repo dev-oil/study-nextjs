@@ -1,9 +1,9 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { createTodo, getTodos } from '../actions/todo-actions';
 import { useState } from 'react';
-import { create } from 'domain';
+import { queryClient } from '../config/ReactQueryProvider';
 
 export default function TodosPage() {
   const [todo, setTodo] = useState('');
@@ -22,7 +22,8 @@ export default function TodosPage() {
       return createTodo(todo);
     },
     onSuccess: (TODOS) => {
-      todosQuery.refetch(); // mutationFn이 성공했을 때 연관된 todosQuery를 다시 불러오도록
+      // todosQuery.refetch(); // mutationFn이 성공했을 때 연관된 todosQuery를 다시 불러오도록 (현재 컴포넌트에 존재하는 해당 useQuery 훅만)
+      queryClient.invalidateQueries({ queryKey: ['todos'] }); // 위에 refetch랑 같은 기능. 전역적으로 동기화가 필요할 때 이렇게도 가능 (현재 페이지 뿐만 아니라, 다른 페이지/컴포넌트에 존재하는 ['todos'] 쿼리도 모두 invalidate 됨.)
       setTodo('');
     },
     onError: (error) => {
